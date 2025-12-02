@@ -3,8 +3,8 @@
 # Variables de répertoires
 PKI_DIR=~/pki
 MOSQUITTO_DIR=~/mosquitto
-BROKER_IP="192.168.68.36"
-BROKER_DNS="broker.example.com"
+BROKER_IP="192.168.68.67"
+BROKER_DNS="edge2.home"
 
 # Variables X509
 COUNTRY="FR"
@@ -12,8 +12,9 @@ STATE="Bretagne"
 LOCALITY="Vannes"
 ORGANIZATION="WAGO"
 ORG_UNIT="MPA"
-COMMON_NAME_BROKER="Broker"
-COMMON_NAME_CLIENT="Client"
+COMMON_NAME_BROKER="edge2.home"
+COMMON_NAME_CLIENT="PFC300-68415F"
+COMMON_NAME_CA="RootCA"
 
 # Fichier de configuration temporaire pour OpenSSL
 OPENSSL_CONFIG=$(mktemp)
@@ -28,7 +29,7 @@ stateOrProvinceName = $STATE
 localityName = $LOCALITY
 organizationName = $ORGANIZATION
 organizationalUnitName = $ORG_UNIT
-commonName = $COMMON_NAME_BROKER
+commonName = $COMMON_NAME_CA
 
 [v3_req]
 subjectAltName = IP:$BROKER_IP,DNS:$BROKER_DNS
@@ -37,7 +38,7 @@ EOL
 # Génération CA
 mkdir -p $PKI_DIR/ca $PKI_DIR/broker $PKI_DIR/clients $MOSQUITTO_DIR/config/certs
 openssl req -new -x509 -days 365 -keyout $PKI_DIR/ca/ca.key -out $PKI_DIR/ca/ca.crt \
-  -subj "/C=$COUNTRY/ST=$STATE/L=$LOCALITY/O=$ORGANIZATION/OU=$ORG_UNIT/CN=$COMMON_NAME_BROKER"
+  -subj "/C=$COUNTRY/ST=$STATE/L=$LOCALITY/O=$ORGANIZATION/OU=$ORG_UNIT/CN=$COMMON_NAME_CA"
 
 # Clé privée serveur et signature
 openssl genrsa -out $PKI_DIR/broker/broker.key 2048
